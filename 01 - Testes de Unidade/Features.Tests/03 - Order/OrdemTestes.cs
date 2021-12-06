@@ -2,7 +2,7 @@
 
 namespace Features.Tests._03___Order
 {
-    [TestCaseOrderer("Features.Tests.PriorityOrderer", "Features.Tests")]
+    [TestCaseOrderer("Features.Tests._03___Order.PriorityOrderer", "Features.Tests")]
     public class OrdemTestes
     {
         public static bool Teste1Chamado;
