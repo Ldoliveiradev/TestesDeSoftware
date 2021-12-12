@@ -7,8 +7,8 @@ namespace NerdStore.Vendas.Domain
 {
     public class Pedido
     {
-        public static int MAX_UNIDADES_ITEM = 15;
-        public static int MIN_UNIDADES_ITEM = 1;
+        public static int MAX_UNIDADES_ITEM => 15;
+        public static int MIN_UNIDADES_ITEM => 1;
 
         public Guid ClienteId { get; private set; }
         public decimal ValorTotal { get; private set; }
@@ -76,6 +76,15 @@ namespace NerdStore.Vendas.Domain
 
             _pedidoItems.Remove(itemExistente);
             _pedidoItems.Add(pedidoItem);
+
+            CalcularValorPedido();
+        }
+
+        public void RemoverItem(PedidoItem pedidoItem)
+        {
+            ValidarPedidoItemInexistente(pedidoItem);
+
+            _pedidoItems.Remove(pedidoItem);
 
             CalcularValorPedido();
         }

@@ -133,12 +133,45 @@ namespace NerdStore.Vendas.Domain.Tests
             var pedido = Pedido.PedidoFactory.NovoPedidoRascunho(Guid.NewGuid());
             var produtoId = Guid.NewGuid();
             var pedidoItemExistente1 = new PedidoItem(produtoId, "Produto Teste", 3, 15);
-            pedido.AdicionarItem(pedidoItemExistente1);         
+            pedido.AdicionarItem(pedidoItemExistente1);
 
             var pedidoItemAtualizado = new PedidoItem(produtoId, "Produto Teste", Pedido.MAX_UNIDADES_ITEM + 1, 15);
 
             // Act & Assert
             Assert.Throws<DomainException>(() => pedido.AtualizarItem(pedidoItemAtualizado));
+        }
+
+        [Fact(DisplayName = "Remover Item Pedido Inexistente")]
+        [Trait("Categoria", "Vendas - Pedido")]
+        public void RemoverItemPedido_ItemNaoExistenteNaLista_DeveRetornarException()
+        {
+            // Arrange
+            var pedido = Pedido.PedidoFactory.NovoPedidoRascunho(Guid.NewGuid());
+            var pedidoItemRemover = new PedidoItem(Guid.NewGuid(), "Produto Teste", 5, 100);
+
+            // Act & Assert
+            Assert.Throws<DomainException>(() => pedido.RemoverItem(pedidoItemRemover));
+        }
+
+        [Fact(DisplayName = "Remover Item Pedido Deve Calcular Valor Total")]
+        [Trait("Categoria", "Vendas - Pedido")]
+        public void RemoverItemPedido_ItemExistente_DeveAtualizarValorTotal()
+        {
+            // Arrange
+            var pedido = Pedido.PedidoFactory.NovoPedidoRascunho(Guid.NewGuid());
+            var pedidoId = Guid.NewGuid();
+            var pedidoItem1 = new PedidoItem(Guid.NewGuid(), "Produto Xpto", 2, 100);
+            var pedidoItem2 = new PedidoItem(pedidoId, "Produto Teste", 3, 15);
+            pedido.AdicionarItem(pedidoItem1);
+            pedido.AdicionarItem(pedidoItem2);
+
+            var totalPedido = pedidoItem2.Quantidade * pedidoItem2.ValorUnitario;
+
+            // Act
+            pedido.RemoverItem(pedidoItem1);
+
+            // Assert
+            Assert.Equal(totalPedido, pedido.ValorTotal);
         }
     }
 }
